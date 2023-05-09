@@ -18,6 +18,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 // Add services to the container.
 
+builder.Services.AddCors(options =>
+    options.AddPolicy("AllowAllOrigins", builder =>
+    {
+        builder.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    }));
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -42,6 +50,7 @@ builder.Services.AddScoped<IZodiacRepository, ZodiacRepository>();
 builder.Services.AddScoped<IHoroscopeRepository, HoroscopeRepository>();
 builder.Services.AddScoped<IDailyHoroscopeFileContentRepository, DailyHoroscopeFileContentRepository>();
 
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
@@ -54,6 +63,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAllOrigins");
 
 app.UseRouting();
 
